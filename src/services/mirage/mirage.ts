@@ -9,40 +9,43 @@ interface User{
     created_at:string,
 }
 
-export function makeServer (){
-    const server= createServer({
-        models:{
+export function makeServer() {
+    const server = createServer({
+        models: {
             user: Model.extend<Partial<User>>({})
         },
 
-        factories:{
+        factories: {
             user: Factory.extend({
-                name(i) {
-                    return `user ${i + 1}`
-                },
-                email() {
-                    return faker.internet.email().toLowerCase()
-                },
-                created_at() {
-                    return faker.date.recent(10, new Date())
-                }
-            })
-        },
+              name(i: number) {
+                return faker.name.findName();
+              },
+              email() {
+                return faker.internet.email();
+              },
+              createdAt() {
+                return faker.date.recent(10);
+              },
+            }),
+          },
 
         seeds(server){
-            server.createList('user',100)
+            server.createList('user',10)
         },
 
         routes(){
-            this.namespace = 'api'
-            this.timing = 750
+            this.namespace = 'api';
+            this.timing = 250;
 
             this.get('/users');
-            this.post('/users')
+            this.post('/users');
 
-            this.passthrough()
-        }
+            this.namespace = '';
+
+            this.passthrough();
+        },
+        
     })
-
+    console.log(server)
     return server;
 }
